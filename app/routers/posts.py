@@ -18,7 +18,7 @@ def get_posts(
     search: Optional[str] = "",
 ):
     postsWithVotes = (
-        db.query(models.Post, func.count(models.Vote.post_id).label("votes"))
+        db.query(models.Dogs, func.count(models.Vote.post_id).label("votes"))
         .join(models.Vote, models.Post.id == models.Vote.post_id, isouter=True)
         .group_by(models.Post.id)
         .filter(models.Post.title.contains(search))
