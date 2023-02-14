@@ -14,7 +14,7 @@ router = APIRouter(prefix="/dogs", tags=["Dogs"])
 def get_dogs(
     db: Session = Depends(get_db),
     # Uncomment if you want the user to be logged in to see the dogs
-    # current_user: int = Depends(oauth2.get_current_user),
+    # current_user = Depends(oauth2.get_current_user),
     limit: int = 12,
     skip: int = 0,
     search: Optional[str] = "",
@@ -27,20 +27,20 @@ def get_dogs(
     potty_trained: Optional[bool] = False,
 ):
     dogs = (
-        db.query(models.Dogs)
-        .filter(models.Dogs.name.contains(search))
-        .filter(models.Dogs.country.contains(search_by_country))
-        .filter(models.Dogs.city.contains(search_by_city))
+        db.query(models.Dog)
+        .filter(models.Dog.name.contains(search))
+        .filter(models.Dog.country.contains(search_by_country))
+        .filter(models.Dog.city.contains(search_by_city))
         # Find a better way to implement search by age group
         # .filter(models.Dogs.age_group == search_by_age_group)
-        .filter((models.Dogs.disabled == disabled) & (models.Dogs.disabled == True))
+        .filter((models.Dog.disabled == disabled) & (models.Dogs.disabled == True))
         .filter(
-            (models.Dogs.street_rescue == street_rescue)
-            & (models.Dogs.street_rescue == True)
+            (models.Dog.street_rescue == street_rescue)
+            & (models.Dog.street_rescue == True)
         )
         .filter(
-            (models.Dogs.potty_trained == potty_trained)
-            & (models.Dogs.potty_trained == True)
+            (models.Dog.potty_trained == potty_trained)
+            & (models.Dog.potty_trained == True)
         )
         .offset(skip)
         .limit(limit)
@@ -55,10 +55,10 @@ def get_dogs(
 def create_dog(
     dog: schemas.DogCreate,
     db: Session = Depends(get_db),
-    current_user: int = Depends(oauth2.get_current_user),
+    current_user=Depends(oauth2.get_current_user),
 ):
-    new_dog = models.Dogs(
-        user_id=current_user.id, age_group=get_age_group(dog.age_months), **dog.dict()
+    new_dog = models.Dog(
+        owner_id=current_user.id, age_group=get_age_group(dog.age_months), **dog.dict()
     )
     db.add(new_dog)
     db.commit()
@@ -72,9 +72,9 @@ def get_dog(
     id: int,
     db: Session = Depends(get_db),
     # Uncomment if you want the user to be logged in to see the dogs
-    # current_user: int = Depends(oauth2.get_current_user),
+    # current_user = Depends(oauth2.get_current_user),
 ):
-    dog = db.query(models.Dogs).filter(models.Dogs.id == id).first()
+    dog = db.query(models.Dog).filter(models.Dog.id == id).first()
 
     if not dog:
         raise HTTPException(
@@ -88,9 +88,9 @@ def get_dog(
 def delete_dog(
     id: int,
     db: Session = Depends(get_db),
-    current_user: int = Depends(oauth2.get_current_user),
+    current_user=Depends(oauth2.get_current_user),
 ):
-    delete_query = db.query(models.Dogs).filter(models.Dogs.id == id)
+    delete_query = db.query(models.Dog).filter(models.Dog.id == id)
 
     dog = delete_query.first()
 
@@ -117,9 +117,9 @@ def update_dog(
     id: int,
     updated_dog: schemas.DogCreate,
     db: Session = Depends(get_db),
-    current_user: int = Depends(oauth2.get_current_user),
+    current_user=Depends(oauth2.get_current_user),
 ):
-    dog_query = db.query(models.Dogs).filter(models.Dogs.id == id)
+    dog_query = db.query(models.Dog).filter(models.Dog.id == id)
 
     dog = dog_query.first()
 

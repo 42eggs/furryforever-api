@@ -3,7 +3,7 @@ from .database import Base
 from sqlalchemy.orm import relationship
 
 
-class Dogs(Base):
+class Dog(Base):
     __tablename__ = "dogs"
 
     # auto generated
@@ -39,7 +39,7 @@ class Dogs(Base):
     # owner = relationship("Users")
 
 
-class Users(Base):
+class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True, nullable=False)
@@ -52,7 +52,7 @@ class Users(Base):
     )
 
 
-class AdoptionRequests(Base):
+class AdoptionRequest(Base):
     __tablename__ = "adoption_requests"
 
     # taken from dogs's owner_id
@@ -81,5 +81,5 @@ class AdoptionRequests(Base):
         TIMESTAMP(timezone=True), server_default=text("now()"), nullable=False
     )
 
-    requested_by = relationship("Users", foreign_keys="Users.requested_by_id")
-    dog = relationship("Dogs")
+    requested_by = relationship("User", foreign_keys="AdoptionRequest.requested_by_id")
+    dog = relationship("Dog", foreign_keys="AdoptionRequest.dog_id")

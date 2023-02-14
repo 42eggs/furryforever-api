@@ -7,10 +7,14 @@ from typing import Optional
 # User Schemas
 
 
-class UserCreate(BaseModel):
+class UserBase(BaseModel):
     email: EmailStr
-    password: str
+    name: str
     phone: str
+
+
+class UserCreate(UserBase):
+    password: str
 
     @validator("phone")
     def phone_validation(cls, v):
@@ -20,10 +24,8 @@ class UserCreate(BaseModel):
         return v
 
 
-class UserResponse(BaseModel):
+class UserResponse(UserBase):
     id: int
-    email: EmailStr
-    phone: str
     created_at: datetime
 
     class Config:
@@ -31,18 +33,17 @@ class UserResponse(BaseModel):
 
 
 # Auth Schemas
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
+
+# OAuth2PasswordRequestForm is used instead of another pydantic model for email and password
 
 
-class UserToken(BaseModel):
+class Token(BaseModel):
     access_token: str
     token_type: str
 
 
-class UserTokenData(BaseModel):
-    user_id: Optional[str] = None
+class TokenData(BaseModel):
+    user_id: str
 
 
 # Dog Schemas
@@ -54,7 +55,6 @@ class DogBase(BaseModel):
     city: str
     country: str
     age_months: int
-    age_group: Optional[int] = None
     disabled: bool = False
     street_rescue: bool = False
     potty_trained: bool = False
@@ -68,6 +68,7 @@ class DogResponse(DogBase):
     id: int
     created_at: datetime
     owner_id: int
+    age_group: int
 
     # Uncomment this to get the owner's details
     # owner: UserOut

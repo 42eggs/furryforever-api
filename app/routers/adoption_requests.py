@@ -16,7 +16,7 @@ def adoption_requests(
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def request_adoption(
-    vote: schemas.RequestAdoptionCreate,
+    request_for_adoption: schemas.RequestAdoptionCreate,
     db: Session = Depends(database.get_db),
     current_user: int = Depends(oauth2.get_current_user),
 ):
