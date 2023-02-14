@@ -2,6 +2,7 @@ from typing import List, Optional
 from fastapi import status, HTTPException, Depends, APIRouter, Response
 from .. import models, schemas, oauth2
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import or_, and_
 from ..database import get_db
 from .. import oauth2
 from ..utils import get_age_group
@@ -33,14 +34,14 @@ def get_dogs(
         .filter(models.Dog.city.contains(search_by_city))
         # Find a better way to implement search by age group
         # .filter(models.Dogs.age_group == search_by_age_group)
-        .filter((models.Dog.disabled == disabled) & (models.Dogs.disabled == True))
+        .filter((models.Dog.disabled == disabled) | (models.Dog.disabled == True))
         .filter(
             (models.Dog.street_rescue == street_rescue)
-            & (models.Dog.street_rescue == True)
+            | (models.Dog.street_rescue == True)
         )
         .filter(
             (models.Dog.potty_trained == potty_trained)
-            & (models.Dog.potty_trained == True)
+            | (models.Dog.potty_trained == True)
         )
         .offset(skip)
         .limit(limit)
@@ -135,8 +136,10 @@ def update_dog(
             detail="Not authorized to perform requested actio",
         )
 
-    updated_dog.age_group = get_age_group(updated_dog.age_months)
-    dog_query.update(updated_dog.dict(), synchronize_session=False)
+    updated_dog_dict = updated_dog.dict()
+    updated_dog_dict.update({"age_group": get_age_group(updated_dog.age_months)})
+
+    dog_query.update(updated_dog_dict, synchronize_session=False)
     db.commit()
 
-    return dog.first()
+    return dog_query.first()
