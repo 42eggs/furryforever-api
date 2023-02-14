@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from .config import settings
 from . import models
 from .database import engine
-from .routers import users, posts, auth, vote
+from .routers import adoption_requests, dogs, users, auth
 from fastapi.middleware.cors import CORSMiddleware
 
 # models.Base.metadata.create_all(bind=engine)
@@ -19,12 +19,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(posts.router)
+app.include_router(dogs.router)
 app.include_router(users.router)
 app.include_router(auth.router)
-app.include_router(vote.router)
+app.include_router(adoption_requests.router)
 
 
 @app.get("/")
 def root():
-    return {"message": "Hello World"}
+    return {"message": "Welcome to Furry Forever!"}

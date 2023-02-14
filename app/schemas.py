@@ -51,8 +51,10 @@ class UserTokenData(BaseModel):
 class DogBase(BaseModel):
     name: str
     description: str
+    city: str
+    country: str
     age_months: int
-    age_group: bool
+    age_group: Optional[int] = None
     disabled: bool = False
     street_rescue: bool = False
     potty_trained: bool = False

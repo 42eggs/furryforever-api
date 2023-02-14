@@ -13,6 +13,8 @@ class Dogs(Base):
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
     age_months = Column(Integer, nullable=False)
+    city = Column(String, nullable=False)
+    country = Column(String, nullable=False)
 
     # user input : optional
     disabled = Column(Boolean, server_default="FALSE", nullable=False)
