@@ -14,12 +14,13 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+    _phone_regex = re.compile(r"^\+\d{7,15}\d$", re.IGNORECASE)
+
     @validator("phone")
-    def phone_validation(cls, v):
-        regex = r"^(\+)[1-9][0-9\-\(\)\.]{9,15}$"
-        if v and not re.search(regex, v, re.I):
-            raise ValueError("Phone Number Invalid.")
-        return v
+    def validate_phone(cls, value):
+        if not cls._phone_regex.match(value):
+            raise ValueError("Invalid phone number")
+        return value.strip()
 
 
 class UserResponse(UserBase):
@@ -49,6 +50,16 @@ class TokenData(BaseModel):
 class DogImageBase(BaseModel):
     url: str
     is_primary: bool = False
+
+    _url_regex = re.compile(
+        r"^(https?|ftp)://[^\s/$.?#].[^\s]*\.(jpg|jpeg|png|gif)$", re.IGNORECASE
+    )
+
+    @validator("url")
+    def validate_url(cls, value):
+        if not cls._url_regex.match(value):
+            raise ValueError("Invalid image URL")
+        return value
 
 
 class DogImageCreate(DogImageBase):
