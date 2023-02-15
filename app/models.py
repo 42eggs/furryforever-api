@@ -35,6 +35,26 @@ class Dog(Base):
         TIMESTAMP(timezone=True), server_default=text("now()"), nullable=False
     )
 
+    images = relationship("DogImage", back_populates="dog")
+
+
+class DogImage(Base):
+    __tablename__ = "dog_images"
+
+    # auto generated
+    id = Column(Integer, primary_key=True, index=True, nullable=False)
+
+    # from user: mandatory
+    url = Column(String, nullable=False, unique=True)
+
+    # from user: optional
+    is_primary = Column(Boolean, server_default="FALSE", nullable=False)
+
+    # to be taken automatically when dog is created
+    dog_id = Column(Integer, ForeignKey("dogs.id", ondelete="CASCADE"), nullable=False)
+
+    dog = relationship("Dog", back_populates="images")
+
 
 class User(Base):
     __tablename__ = "users"

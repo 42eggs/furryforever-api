@@ -1,10 +1,11 @@
+import random
 from typing import List, Optional
 from fastapi import status, HTTPException, Depends, APIRouter, Response
 from .. import models, schemas, oauth2
 from sqlalchemy.orm import Session
 from ..database import get_db
 from .. import oauth2
-from ..utils import get_age_group
+from ..utils import get_age_group, validate_dog_images
 from sqlalchemy import func
 
 router = APIRouter(prefix="/dogs", tags=["Dogs"])
@@ -57,14 +58,70 @@ def create_dog(
     db: Session = Depends(get_db),
     current_user=Depends(oauth2.get_current_user),
 ):
+    # Validate the schema wrt the images
+    validate_dog_images(dog)
+
+    dog_dict_without_images = dog.dict()
+    dog_dict_without_images.pop("images")
+
     new_dog = models.Dog(
-        owner_id=current_user.id, age_group=get_age_group(dog.age_months), **dog.dict()
+        owner_id=current_user.id,
+        age_group=get_age_group(dog.age_months),
+        **dog_dict_without_images,
     )
     db.add(new_dog)
     db.commit()
     db.refresh(new_dog)
 
+    for image in dog.images:
+        db_image = models.DogImage(**image.dict(), dog_id=new_dog.id)
+        db.add(db_image)
+
+    db.commit()
+
     return new_dog
+
+
+@router.put("/{id}", response_model=schemas.DogResponse)
+def update_dog(
+    id: int,
+    updated_dog: schemas.DogCreate,
+    db: Session = Depends(get_db),
+    current_user=Depends(oauth2.get_current_user),
+):
+    dog_query = db.query(models.Dog).filter(models.Dog.id == id)
+
+    dog = dog_query.first()
+
+    if not dog:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Dog with id: {id} does not exist",
+        )
+
+    if dog.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to perform requested actio",
+        )
+    validate_dog_images(updated_dog)
+    updated_dog_dict = updated_dog.dict()
+    updated_dog_dict.update({"age_group": get_age_group(updated_dog.age_months)})
+    updated_dog_dict.pop("images")
+    dog_query.update(updated_dog_dict, synchronize_session=False)
+    db.commit()
+
+    # Delete all the existing images for the dog
+    db.query(models.DogImage).filter(models.DogImage.dog_id == id).delete()
+
+    # Create and add the new images for the dog
+    for image in updated_dog.images:
+        db_image = models.DogImage(**image.dict(), dog_id=id)
+        db.add(db_image)
+
+    db.commit()
+
+    return dog_query.first()
 
 
 @router.get("/{id}", response_model=schemas.DogResponse)
@@ -110,34 +167,3 @@ def delete_dog(
     db.commit()
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-
-
-@router.put("/{id}", response_model=schemas.DogResponse)
-def update_dog(
-    id: int,
-    updated_dog: schemas.DogCreate,
-    db: Session = Depends(get_db),
-    current_user=Depends(oauth2.get_current_user),
-):
-    dog_query = db.query(models.Dog).filter(models.Dog.id == id)
-
-    dog = dog_query.first()
-
-    if not dog:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Dog with id: {id} does not exist",
-        )
-
-    if dog.owner_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to perform requested actio",
-        )
-
-    updated_dog_dict = updated_dog.dict()
-    updated_dog_dict.update({"age_group": get_age_group(updated_dog.age_months)})
-
-    dog_query.update(updated_dog_dict, synchronize_session=False)
-    db.commit()
-    return dog_query.first()

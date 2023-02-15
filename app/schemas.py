@@ -1,7 +1,7 @@
 import re
 from pydantic import BaseModel, EmailStr, conint, constr, validator
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 
 # User Schemas
@@ -32,9 +32,8 @@ class UserResponse(UserBase):
 
 # Auth Schemas
 
+
 # OAuth2PasswordRequestForm is used instead of another pydantic model for email and password
-
-
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -42,6 +41,25 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     user_id: str
+
+
+# Dog's Images schemas
+
+
+class DogImageBase(BaseModel):
+    url: str
+    is_primary: bool = False
+
+
+class DogImageCreate(DogImageBase):
+    pass
+
+
+class DogImageResponse(DogImageBase):
+    id: int
+
+    class Config:
+        orm_mode = True
 
 
 # Dog Schemas
@@ -59,6 +77,7 @@ class DogBase(BaseModel):
 
 
 class DogCreate(DogBase):
+    images: List[DogImageCreate]
     pass
 
 
@@ -67,6 +86,7 @@ class DogResponse(DogBase):
     created_at: datetime
     owner_id: int
     age_group: int
+    images: List[DogImageResponse]
 
     class Config:
         orm_mode = True

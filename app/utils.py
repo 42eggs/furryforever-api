@@ -1,3 +1,5 @@
+import random
+from fastapi import HTTPException, status
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -26,3 +28,35 @@ def get_age_group(age):
         return 6
     else:
         return 7
+
+
+def validate_dog_images(dog):
+    if not dog.images:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="At least one image is required.",
+        )
+
+    if len(dog.images) > 5:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A dog can have at most 5 images",
+        )
+
+    if len(dog.images) == 1:
+        dog.images[0].is_primary = True
+    else:
+        flag = 0
+        for image in dog.images:
+            if image.is_primary == True:
+                flag = flag + 1
+
+        if flag == 0:
+            primary_image = random.choice(dog.images)
+            primary_image.is_primary = True
+
+        if flag > 1:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Only one image can be primary",
+            )
