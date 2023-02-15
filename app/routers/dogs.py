@@ -2,7 +2,6 @@ from typing import List, Optional
 from fastapi import status, HTTPException, Depends, APIRouter, Response
 from .. import models, schemas, oauth2
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import or_, and_
 from ..database import get_db
 from .. import oauth2
 from ..utils import get_age_group
@@ -141,5 +140,4 @@ def update_dog(
 
     dog_query.update(updated_dog_dict, synchronize_session=False)
     db.commit()
-
     return dog_query.first()

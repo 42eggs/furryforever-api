@@ -5,8 +5,6 @@ from typing import Optional
 
 
 # User Schemas
-
-
 class UserBase(BaseModel):
     email: EmailStr
     name: str
@@ -70,9 +68,6 @@ class DogResponse(DogBase):
     owner_id: int
     age_group: int
 
-    # Uncomment this to get the owner's details
-    # owner: UserOut
-
     class Config:
         orm_mode = True
 
@@ -81,19 +76,28 @@ class DogResponse(DogBase):
 
 
 class RequestAdoptionBase(BaseModel):
-    requested_to_id: int
     dog_id: int
-    requested_by_id: int
 
 
-class RequestAdoptionCreate(BaseModel):
+class RequestAdoptionCreate(RequestAdoptionBase):
     pass
 
 
-class RequestAdoptionResponse(RequestAdoptionBase):
-    created_at: datetime
+class RequestAdoptionResponseBy(RequestAdoptionBase):
+    requested_by_id: int
     requested_by: UserResponse
     dog: DogResponse
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class RequestAdoptionResponseTo(RequestAdoptionBase):
+    requested_to_id: int
+    requested_to: UserResponse
+    dog: DogResponse
+    created_at: datetime
 
     class Config:
         orm_mode = True

@@ -35,9 +35,6 @@ class Dog(Base):
         TIMESTAMP(timezone=True), server_default=text("now()"), nullable=False
     )
 
-    # Uncomment this to get the owner's details
-    # owner = relationship("Users")
-
 
 class User(Base):
     __tablename__ = "users"
@@ -82,4 +79,5 @@ class AdoptionRequest(Base):
     )
 
     requested_by = relationship("User", foreign_keys="AdoptionRequest.requested_by_id")
+    requested_to = relationship("User", foreign_keys="AdoptionRequest.requested_to_id")
     dog = relationship("Dog", foreign_keys="AdoptionRequest.dog_id")
