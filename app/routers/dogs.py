@@ -58,6 +58,8 @@ def create_dog(
     db: Session = Depends(get_db),
     current_user=Depends(oauth2.get_current_user),
 ):
+    # TODO: Validate city and country names
+
     # Validate the schema wrt the images
     validate_dog_images(dog)
 

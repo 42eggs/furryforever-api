@@ -35,11 +35,15 @@ class UserResponse(UserBase):
 
 
 # OAuth2PasswordRequestForm is used instead of another pydantic model for email and password
+
+
+# used to validate jwt response from /login/
 class Token(BaseModel):
     access_token: str
     token_type: str
 
 
+# used to validate in Oauth.py
 class TokenData(BaseModel):
     user_id: str
 
@@ -114,21 +118,25 @@ class RequestAdoptionCreate(RequestAdoptionBase):
     pass
 
 
-class RequestAdoptionResponseBy(RequestAdoptionBase):
+class RequestAdoptionResponseBase(RequestAdoptionBase):
+    dog: DogResponse
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class RequestAdoptionResponseBy(RequestAdoptionResponseBase):
     requested_by_id: int
     requested_by: UserResponse
-    dog: DogResponse
-    created_at: datetime
 
-    class Config:
-        orm_mode = True
+    # class Config:
+    #     orm_mode = True
 
 
-class RequestAdoptionResponseTo(RequestAdoptionBase):
+class RequestAdoptionResponseTo(RequestAdoptionResponseBase):
     requested_to_id: int
     requested_to: UserResponse
-    dog: DogResponse
-    created_at: datetime
 
-    class Config:
-        orm_mode = True
+    # class Config:
+    #     orm_mode = True
