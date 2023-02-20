@@ -8,7 +8,7 @@ from typing import List
 def test_get_all_dogs(authorized_client, create_test_dogs):
     response = authorized_client.get("/dogs/")
 
-    # Checks the number of Dog entries only for now
+    # Checks the number of Dog entries and data validity only for now
     assert len([schemas.DogResponse(**dog) for dog in response.json()]) == len(
         create_test_dogs
     )
