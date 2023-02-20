@@ -47,6 +47,7 @@ def get_dogs(
         .limit(limit)
         .all()
     )
+    print(dogs)
     return dogs
 
 
@@ -104,7 +105,7 @@ def update_dog(
     if dog.owner_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to perform requested actio",
+            detail="Not authorized to perform requested action",
         )
     validate_dog_images(updated_dog)
     updated_dog_dict = updated_dog.dict()
