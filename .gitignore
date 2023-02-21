@@ -2,3 +2,8 @@
 __pycache__
 venv/
 .github/
+.pytest_cache/
+Pipfile
+Pipfile.lock
+DockerFile
+docker-compose.yml
