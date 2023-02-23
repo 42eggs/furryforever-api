@@ -27,4 +27,4 @@ app.include_router(adoption_requests.router)
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to Furry Forever! sadsadad"}
+    return {"message": "Welcome to Furry Forever!"}
