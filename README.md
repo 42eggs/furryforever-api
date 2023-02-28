@@ -7,6 +7,7 @@ This has been hosted on a Ubuntu VM for now which utilizes 4 gunicorn worker thr
 
 ## Getting Started for local deployment
 <br>
+
 ### Clone the repo
 
 ```bash
