@@ -64,7 +64,7 @@ This will launch the app on `http://localhost:8000/` unless mentioned otherwise.
 
 
 
-##Notes:
+## Notes:
 
 - With each push or PR on the **main** repo, `test-deploy.yml` will run which is a very basic CI/CD workflow just to make sure all tests pass and everything gets updated on the ubuntu VM.
 
