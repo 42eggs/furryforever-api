@@ -16,6 +16,7 @@ cd furryforever
 git clone https://github.com/42eggs/furryforever-api
 ```
 <br>
+
 ### Create virtual environment and activate
 
 Use `python3` if `python` is unrecognized. 
@@ -35,6 +36,7 @@ python -m venv venv  //creates a folder named venv
 source venv/bin/activate
 ```
 <br>
+
 ### Install the requirements and set up environment variables
 
 ```bash
@@ -43,6 +45,7 @@ pip install -r requirements.txt
 ```
 Rename `.env-example` to `.env` and fill up the given values
 <br>
+
 ### Apply DB migrations and run tests
 
 
