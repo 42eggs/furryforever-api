@@ -1,6 +1,6 @@
 # RESTful API for a Dog Adoption Web app (in progress)
 
-### Live OpenAPI docs : <ins>[Furry Forever API](http://64.227.129.68/docs)<ins>
+### Live OpenAPI docs : <ins>[Furry Forever API](http://64.227.129.68/docs)</ins>
 
 This has been hosted on a Ubuntu VM for now which utilizes 4 gunicorn worker threads and sits behind nginx which is set to reload with system restart.
 <br><br>
