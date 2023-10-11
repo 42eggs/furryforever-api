@@ -41,7 +41,8 @@ source venv/bin/activate
 
 ```bash
 cd furryforever-api
-pip install -r requirements.txt
+pip install -r requirements.txt //linux 
+pip install -r win-requirements.txt //windows 
 ```
 Rename `.env-example` to `.env` and fill up the given values
 <br>
