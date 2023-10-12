@@ -85,6 +85,7 @@ class DogBase(BaseModel):
     description: str
     city: str
     country: str
+    address: str
     age_months: int
     disabled: bool = False
     street_rescue: bool = False
@@ -126,7 +127,7 @@ class RequestAdoptionResponseBase(RequestAdoptionBase):
         orm_mode = True
 
 
-class RequestAdoptionResponseBy(RequestAdoptionResponseBase):
+class RequestAdoptionResponseToMe(RequestAdoptionResponseBase):
     requested_by_id: int
     requested_by: UserResponse
 
@@ -134,7 +135,7 @@ class RequestAdoptionResponseBy(RequestAdoptionResponseBase):
     #     orm_mode = True
 
 
-class RequestAdoptionResponseTo(RequestAdoptionResponseBase):
+class RequestAdoptionResponseByMe(RequestAdoptionResponseBase):
     requested_to_id: int
     requested_to: UserResponse
 

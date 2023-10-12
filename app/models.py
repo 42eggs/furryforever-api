@@ -20,11 +20,12 @@ class Dog(Base):
     id = Column(BigInteger, primary_key=True, index=True, nullable=False)
 
     # user input : mandatory
-    name = Column(String, nullable=False)
-    description = Column(String, nullable=False)
+    name = Column(String(length=100), nullable=False)
+    description = Column(String(length=500), nullable=False)
     age_months = Column(SmallInteger, nullable=False, index=True)
-    city = Column(String, nullable=False)
-    country = Column(String, nullable=False)
+    city = Column(String(length=100), nullable=False)
+    country = Column(String(length=100), nullable=False)
+    address = Column(String(length=250), nullable=False)
 
     # user input : optional
     disabled = Column(Boolean, server_default="FALSE", nullable=False)
@@ -55,7 +56,7 @@ class DogImage(Base):
     id = Column(BigInteger, primary_key=True, index=True, nullable=False)
 
     # from user: mandatory
-    url = Column(String, nullable=False, unique=True)
+    url = Column(String(length=1000), nullable=False, unique=True)
 
     # from user: optional
     is_primary = Column(Boolean, server_default="FALSE", nullable=False)
@@ -72,10 +73,10 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(BigInteger, primary_key=True, index=True, nullable=False)
-    email = Column(String, nullable=False, unique=True)
-    name = Column(String, nullable=False)
+    email = Column(String(length=500), nullable=False, unique=True)
+    name = Column(String(length=100), nullable=False)
     password = Column(String, nullable=False)
-    phone = Column(String, nullable=False)
+    phone = Column(String(length=50), nullable=False)
     is_admin = Column(Boolean, server_default="FALSE", nullable=False)
     created_at = Column(
         TIMESTAMP(timezone=True), server_default=text("now()"), nullable=False

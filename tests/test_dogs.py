@@ -44,6 +44,7 @@ def test_get_dog_by_id_not_found(authorized_client, create_test_dogs):
 #         "age_months": 15,
 #         "city": "Kolkata",
 #         "country": "India",
+#         "address": "New Town"
 #         "street_rescue": True,
 #         "disabled": True,
 #         "images": [

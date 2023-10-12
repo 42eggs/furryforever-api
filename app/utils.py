@@ -60,3 +60,16 @@ def validate_dog_images(dog):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Only one image can be primary",
             )
+
+
+def verify_city_and_country(city, country):
+    # verify city
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="City doesn't exist",
+    )
+    # verify countries
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Country doesn't exist",
+    )

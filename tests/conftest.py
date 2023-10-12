@@ -76,6 +76,7 @@ def create_test_dogs(create_test_user, session):
             "age_months": 12,
             "city": "Delhi",
             "country": "India",
+            "address": "Saket",
             "street_rescue": True,
             "disabled": True,
             "potty_trained": True,
@@ -100,6 +101,7 @@ def create_test_dogs(create_test_user, session):
             "age_months": 2,
             "city": "New York",
             "country": "USA",
+            "address": "Manhattan",
             "street_rescue": True,
             "potty_trained": True,
             "age_group": 1,
@@ -121,6 +123,7 @@ def create_test_dogs(create_test_user, session):
             "age_months": 55,
             "city": "Moscow",
             "country": "Russia",
+            "address": "lol",
             "disabled": True,
             "age_group": 6,
             "images": [

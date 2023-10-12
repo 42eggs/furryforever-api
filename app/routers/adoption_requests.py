@@ -68,7 +68,7 @@ def request_adoption(
 
 
 # Adoption Requests by others to me (authenticated user)
-@router.get("/by", response_model=List[schemas.RequestAdoptionResponseBy])
+@router.get("/to_me", response_model=List[schemas.RequestAdoptionResponseToMe])
 def adoption_requests(
     db: Session = Depends(database.get_db),
     current_user: int = Depends(oauth2.get_current_user),
@@ -89,7 +89,7 @@ def adoption_requests(
 
 
 # Adoption Requests to others by me (authenticated user)
-@router.get("/to", response_model=List[schemas.RequestAdoptionResponseTo])
+@router.get("/by_me", response_model=List[schemas.RequestAdoptionResponseByMe])
 def adoption_requests(
     db: Session = Depends(database.get_db),
     current_user: int = Depends(oauth2.get_current_user),
