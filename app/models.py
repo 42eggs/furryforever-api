@@ -1,4 +1,14 @@
-from sqlalchemy import TIMESTAMP, Boolean, Column, Integer, String, text, ForeignKey
+from sqlalchemy import (
+    TIMESTAMP,
+    Boolean,
+    Column,
+    Integer,
+    String,
+    text,
+    ForeignKey,
+    BigInteger,
+    SmallInteger,
+)
 from .database import Base
 from sqlalchemy.orm import relationship
 
@@ -7,12 +17,12 @@ class Dog(Base):
     __tablename__ = "dogs"
 
     # auto generated
-    id = Column(Integer, primary_key=True, index=True, nullable=False)
+    id = Column(BigInteger, primary_key=True, index=True, nullable=False)
 
     # user input : mandatory
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
-    age_months = Column(Integer, nullable=False)
+    age_months = Column(SmallInteger, nullable=False, index=True)
     city = Column(String, nullable=False)
     country = Column(String, nullable=False)
 
@@ -23,7 +33,7 @@ class Dog(Base):
 
     # Groups (months): 0-2: 1, 2-6: 2, 6-12: 3, 12-24: 4, 24-48: 5, 48-96: 6, 96+: 7
     # TODO: find a better way to do this
-    age_group = Column(Integer, nullable=False)
+    age_group = Column(SmallInteger, nullable=False)
 
     # to be taken automatically when user is authenticated
     owner_id = Column(
@@ -42,7 +52,7 @@ class DogImage(Base):
     __tablename__ = "dog_images"
 
     # auto generated
-    id = Column(Integer, primary_key=True, index=True, nullable=False)
+    id = Column(BigInteger, primary_key=True, index=True, nullable=False)
 
     # from user: mandatory
     url = Column(String, nullable=False, unique=True)
@@ -51,7 +61,9 @@ class DogImage(Base):
     is_primary = Column(Boolean, server_default="FALSE", nullable=False)
 
     # to be taken automatically when dog is created
-    dog_id = Column(Integer, ForeignKey("dogs.id", ondelete="CASCADE"), nullable=False)
+    dog_id = Column(
+        BigInteger, ForeignKey("dogs.id", ondelete="CASCADE"), nullable=False
+    )
 
     dog = relationship("Dog", back_populates="images")
 
@@ -59,11 +71,12 @@ class DogImage(Base):
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True, nullable=False)
+    id = Column(BigInteger, primary_key=True, index=True, nullable=False)
     email = Column(String, nullable=False, unique=True)
     name = Column(String, nullable=False)
     password = Column(String, nullable=False)
     phone = Column(String, nullable=False)
+    is_admin = Column(Boolean, server_default="FALSE", nullable=False)
     created_at = Column(
         TIMESTAMP(timezone=True), server_default=text("now()"), nullable=False
     )
@@ -74,21 +87,21 @@ class AdoptionRequest(Base):
 
     # taken from dogs's owner_id
     requested_to_id = Column(
-        Integer,
+        BigInteger,
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         primary_key=True,
     )
     # taken from dogs's id
     dog_id = Column(
-        Integer,
+        BigInteger,
         ForeignKey("dogs.id", ondelete="CASCADE"),
         nullable=False,
         primary_key=True,
     )
     # taken from authenticated user's id or redirected to login
     requested_by_id = Column(
-        Integer,
+        BigInteger,
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         primary_key=True,

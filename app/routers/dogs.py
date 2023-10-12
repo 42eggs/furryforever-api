@@ -47,7 +47,6 @@ def get_dogs(
         .limit(limit)
         .all()
     )
-    print(dogs)
     return dogs
 
 
@@ -102,7 +101,7 @@ def update_dog(
             detail=f"Dog with id: {id} does not exist",
         )
 
-    if dog.owner_id != current_user.id:
+    if not current_user.is_admin and dog.owner_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to perform requested action",
@@ -160,7 +159,7 @@ def delete_dog(
             detail=f"Dog with id: {id} does not exist",
         )
 
-    if dog.owner_id != current_user.id:
+    if not current_user.is_admin and dog.owner_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to perform requested action",
