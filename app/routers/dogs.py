@@ -66,20 +66,32 @@ def create_dog(
     dog_dict_without_images = dog.dict()
     dog_dict_without_images.pop("images")
 
-    new_dog = models.Dog(
-        owner_id=current_user.id,
-        age_group=get_age_group(dog.age_months),
-        **dog_dict_without_images,
-    )
-    db.add(new_dog)
-    db.commit()
-    db.refresh(new_dog)
+    try:
+        # Begin a transaction
+        with db.begin():
+            new_dog = models.Dog(
+                owner_id=current_user.id,
+                age_group=get_age_group(dog.age_months),
+                **dog_dict_without_images,
+            )
+            db.add(new_dog)
+            db.commit()
+            db.refresh(new_dog)
 
-    for image in dog.images:
-        db_image = models.DogImage(**image.dict(), dog_id=new_dog.id)
-        db.add(db_image)
+            for image in dog.images:
+                db_image = models.DogImage(**image.dict(), dog_id=new_dog.id)
+                db.add(db_image)
 
-    db.commit()
+            db.commit()
+
+    except Exception as e:
+        # Rollback the transaction in case of any exception
+        db.rollback()
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occured while inserting data",
+        )
 
     return new_dog
 
@@ -106,22 +118,34 @@ def update_dog(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to perform requested action",
         )
+
     validate_dog_images(updated_dog)
     updated_dog_dict = updated_dog.dict()
     updated_dog_dict.update({"age_group": get_age_group(updated_dog.age_months)})
     updated_dog_dict.pop("images")
-    dog_query.update(updated_dog_dict, synchronize_session=False)
-    db.commit()
 
-    # Delete all the existing images for the dog
-    db.query(models.DogImage).filter(models.DogImage.dog_id == id).delete()
+    try:
+        with db.begin():
+            dog_query.update(updated_dog_dict, synchronize_session=False)
+            db.commit()
 
-    # Create and add the new images for the dog
-    for image in updated_dog.images:
-        db_image = models.DogImage(**image.dict(), dog_id=id)
-        db.add(db_image)
+            # Delete all the existing images for the dog
+            db.query(models.DogImage).filter(models.DogImage.dog_id == id).delete()
 
-    db.commit()
+            # Create and add the new images for the dog
+            for image in updated_dog.images:
+                db_image = models.DogImage(**image.dict(), dog_id=id)
+                db.add(db_image)
+
+            db.commit()
+
+    except Exception as e:
+        db.rollback()
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occured while updating data",
+        )
 
     return dog_query.first()
 
